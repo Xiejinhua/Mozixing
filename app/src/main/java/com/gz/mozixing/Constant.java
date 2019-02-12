@@ -17,6 +17,7 @@ public class Constant {
     final static public String defaultPreferenceName = "SaveData";
     final static public String userTheme = "ThemeBlue";
     final static public String authToken = "AuthToken";
+    final static public String userLogin = "UserLogin";
 
     //Global Function
     static public String MD5(String md5) {

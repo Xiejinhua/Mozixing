@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">墨子星童装</string>
 
+    <string name="cancel">取消</string>
+    <string name="ok">确定</string>
 
 </resources>

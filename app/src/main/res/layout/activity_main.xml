@@ -15,4 +15,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <ImageView
+        android:id="@+id/none_message"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:scaleType="centerInside"
+        android:src="@mipmap/ic_splash"
+        android:visibility="gone" />
+
+
 </LinearLayout>

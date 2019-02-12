@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.MessageQueue;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,13 +17,19 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.gz.mozixing.fragment.ChildrenFragment;
 import com.gz.mozixing.network.model.ChildrenModel;
+import com.gz.mozixing.network.model.LoginModel;
+import com.gz.mozixing.network.model.NetWorkCallback;
+import com.gz.mozixing.utils.ACacheUtil;
+import com.gz.mozixing.utils.ActivityUtil;
 import com.gz.mozixing.utils.PermissionUtils;
-import com.gz.mozixing.utils.statusBar.MVPConfig;
-import com.gz.mozixing.utils.statusBar.StatusBarUtil;
+import com.gz.mozixing.utils.RemindDialogUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,12 +41,15 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     ImageView message;
     @BindView(R.id.vp)
     ViewPager vp;
+    @BindView(R.id.none_message)
+    ImageView noneMessage;
 
     private Activity activity;
     private ArrayList<Fragment> mFragments = new ArrayList<>();
     private ArrayList<String> mTitles = new ArrayList<>();
     private MyPagerAdapter pagerAdapter;
     private ArrayList<ChildrenModel.DataBean.ResultBean> childrenList = new ArrayList<>();
+    private LoginModel loginModel;
 
     public static void actionStart(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
@@ -58,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         activity = this;
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        ActivityUtil.init(this);
         requestPermission();
         message.setVisibility(View.VISIBLE);
         refreshData();
@@ -65,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     @OnClick(R.id.message)
     void addChildren() {
-        Toast.makeText(this, "addChildren", Toast.LENGTH_SHORT).show();
+        refreshData();
     }
 
 
@@ -73,12 +81,36 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
      * 获取数据
      */
     public void refreshData() {
-        for (int i = 0; i < 5; i++) {
-            ChildrenModel.DataBean.ResultBean model = new ChildrenModel.DataBean.ResultBean();
-            model.setChildrenId(i + "");
-            childrenList.add(model);
+        loginModel = new Gson().fromJson(ACacheUtil.get(activity).getAsString(Constant.userLogin), LoginModel.class);
+        if (loginModel != null) {
+            Map<String, String> map = new HashMap<>();
+            map.put("parentId", loginModel.getData().getResultX().getParentId());
+            ChildrenModel.getResponse(map, new NetWorkCallback<ChildrenModel>() {
+                @Override
+                public void onResponse(ChildrenModel response) {
+                    if (response.getData() != null && response.getData().getResultX() != null && response.getData().getResultX().size() > 0) {
+                        vp.setVisibility(View.VISIBLE);
+                        noneMessage.setVisibility(View.GONE);
+                        childrenList.addAll(response.getData().getResultX());
+                        setData();
+                    } else {
+                        vp.setVisibility(View.GONE);
+                        noneMessage.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    vp.setVisibility(View.GONE);
+                    noneMessage.setVisibility(View.VISIBLE);
+                    RemindDialogUtil.showEasy(activity, message);
+                }
+            });
+        } else {
+            vp.setVisibility(View.GONE);
+            noneMessage.setVisibility(View.VISIBLE);
         }
-        setData();
+
     }
 
     /**

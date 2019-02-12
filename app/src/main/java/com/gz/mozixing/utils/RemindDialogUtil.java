@@ -2,21 +2,17 @@ package com.gz.mozixing.utils;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
 import com.gz.mozixing.R;
+import com.gz.mozixing.interfaces.TextOnClickListener;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 
@@ -177,6 +173,56 @@ public class RemindDialogUtil {
         }
     }
 
+
+    //输入名字
+    public static void getNameShow(Activity activity, final TextOnClickListener listener) {
+        if (activity != null) {
+            LayoutInflater inflater = (LayoutInflater) activity.getSystemService(activity.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.dialog_name_view, null);
+            TextView cancel_button = (TextView) view.findViewById(R.id.cancel_button);
+            final TextView ok_button = (TextView) view.findViewById(R.id.ok_button);
+            final EditText pin_text = (EditText) view.findViewById(R.id.pin_text);
+            if (!isShow) {
+                isShow = true;
+                dialog = new DialogUtil(activity, view, true);
+                dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                    @Override
+                    public boolean onKey(final DialogInterface dialog, int keyCode, KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+                            isShow = false;
+                            //返回true禁止返回键关掉dialog
+                            return false;
+                        } else {
+                            isShow = false;
+                            return false;
+                        }
+                    }
+
+                });
+                cancel_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        isShow = false;
+                        RemindDialogUtil.cancel();
+                    }
+                });
+                ok_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        isShow = false;
+                        if (pin_text.getText().toString().trim().length() > 0) {
+                            listener.onClickListener(pin_text.getText().toString().trim());
+                            RemindDialogUtil.cancel();
+                        } else {
+                            listener.onClickListener("");
+                        }
+                    }
+                });
+                dialog.show();
+            }
+        }
+    }
 
     /*
      * 判断是否为整数
