@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_eaeeef"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <include layout="@layout/action_bar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fadingEdge="none"
+        android:overScrollMode="never"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/layout_ll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="20dp"
+            android:background="@drawable/add_lable_dialog_shape"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:background="@drawable/title_top_bottom">
+
+
+                <RelativeLayout
+                    android:id="@+id/second_bar_back"
+                    android:layout_width="35dp"
+                    android:layout_height="70dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="5dp"
+                        android:background="@mipmap/ic_return" />
+                </RelativeLayout>
+
+
+                <TextView
+                    android:id="@+id/second_bar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text=""
+                    android:textColor="@color/colorWhite"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+            <com.gz.mozixing.utils.CircleImageView
+                android:id="@+id/user_head"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:scaleType="centerInside"
+                android:src="@mipmap/login_user_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:text="上传时间"
+                android:textColor="@color/color_666666"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="15dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/two_tv"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/five_blue_shape"
+                    android:gravity="center"
+                    android:text="2"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/three_tv"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/five_white_shape"
+                    android:gravity="center"
+                    android:text="3"
+                    android:textColor="@color/color_666666"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/five_tv"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/five_white_shape"
+                    android:gravity="center"
+                    android:text="5"
+                    android:textColor="@color/color_666666"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/ten_tv"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/five_white_shape"
+                    android:gravity="center"
+                    android:text="10"
+                    android:textColor="@color/color_666666"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/fifteen_tv"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/five_white_shape"
+                    android:gravity="center"
+                    android:text="15"
+                    android:textColor="@color/color_666666"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/minute_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="分钟"
+                    android:textColor="@color/color_666666"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tips_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="上传时间越频繁,续航时间会越短哦"
+                android:textColor="@color/color_666666"
+                android:textSize="11sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:text="预警设置"
+                android:textColor="@color/color_666666"
+                android:textSize="14sp" />
+
+
+            <!--app:isb_indicator_color="@color/color_333333"-->
+            <!--app:isb_indicator_text_size="12sp"-->
+            <!--app:isb_indicator_type="rounded_corners"-->
+            <com.warkiz.widget.IndicatorSeekBar
+                android:id="@+id/seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:isb_indicator_type="custom"
+                app:isb_max="60.0"
+                app:isb_min="0.0"
+                app:isb_progress_value_float="true"
+                app:isb_seek_bar_type="continuous"
+                app:isb_show_indicator="true"
+                app:isb_text_color="@color/color_8ACCF4"
+                app:isb_thumb_color="@color/color_8ACCF4"
+                app:isb_thumb_progress_stay="true"
+                app:isb_track_background_bar_color="@color/color_eaeeef"
+                app:isb_track_background_bar_size="3dp"
+                app:isb_track_progress_bar_color="@color/color_8ACCF4"
+                app:isb_track_progress_bar_size="4dp" />
+
+
+            <LinearLayout
+                android:id="@+id/select_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="30dp">
+
+                <ImageView
+                    android:id="@+id/select_iv"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@mipmap/ic_select_un" />
+
+                <TextView
+                    android:id="@+id/select_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:text="短信通知"
+                    android:textColor="@color/color_666666"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/follow_bt"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/ten_blue_shape"
+                android:gravity="center"
+                android:text="取消关注"
+                android:textColor="@color/colorWhite"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
