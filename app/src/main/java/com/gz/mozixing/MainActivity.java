@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.gz.mozixing.activity.setting.BinDingActivity;
+import com.gz.mozixing.event.SwitchEvent;
 import com.gz.mozixing.fragment.ChildrenFragment;
 import com.gz.mozixing.network.model.ChildrenModel;
 import com.gz.mozixing.network.model.LoginModel;
@@ -26,6 +28,10 @@ import com.gz.mozixing.utils.ACacheUtil;
 import com.gz.mozixing.utils.ActivityUtil;
 import com.gz.mozixing.utils.PermissionUtils;
 import com.gz.mozixing.utils.RemindDialogUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,12 +74,13 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         ActivityUtil.init(this);
         requestPermission();
         message.setVisibility(View.VISIBLE);
+        EventBus.getDefault().register(this);//注册eventBus
         refreshData();
     }
 
     @OnClick(R.id.message)
     void addChildren() {
-        refreshData();
+        BinDingActivity.actionStart(activity, loginModel.getData().getResultX().getParentId());
     }
 
 
@@ -121,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         mFragments.clear();
         for (int i = 0; i < childrenList.size(); i++) {
             mTitles.add(childrenList.get(i).getChildrenId());
-            mFragments.add(ChildrenFragment.getInstance(childrenList.get(i).getChildrenId()));
+            mFragments.add(ChildrenFragment.getInstance(childrenList.get(i).getChildrenId(), loginModel.getData().getResultX().getParentId()));
         }
         if (null == pagerAdapter) {
             pagerAdapter = new MyPagerAdapter(getSupportFragmentManager(), mFragments);
@@ -259,5 +266,17 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }, 2000);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);//注册eventBus
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGetMessage(SwitchEvent event) {
+        if (event.getMsg().equalsIgnoreCase("true")) {
+            refreshData();
+        }
+    }
 
 }

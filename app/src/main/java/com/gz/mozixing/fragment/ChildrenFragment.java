@@ -88,17 +88,19 @@ public class ChildrenFragment extends Fragment {
     @BindView(R.id.layout_ll)
     LinearLayout layoutLl;
 
-    private String children_id;
+    private String children_id,parentId;
     private static final String CHILDREN_ID = "Children_Id";
+    private static final String PARENT_ID = "Parent_Id";
     private Activity activity;
     private String[] xDatas = {"00:00", "6:00", "12:00", "18:00", "24:00"};
     private double[] yDatas = {10.4, 20.4, 36.3, 33.1, 25.5};
     Unbinder bind;
 
-    public static ChildrenFragment getInstance(String id) {
+    public static ChildrenFragment getInstance(String id, String parentId) {
         ChildrenFragment sf = new ChildrenFragment();
         Bundle bundle = new Bundle();
         bundle.putString(CHILDREN_ID, id);
+        bundle.putString(PARENT_ID, parentId);
         sf.setArguments(bundle);
         return sf;
     }
@@ -109,6 +111,7 @@ public class ChildrenFragment extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             children_id = bundle.getString(CHILDREN_ID);
+            parentId = bundle.getString(PARENT_ID);
         }
     }
 
