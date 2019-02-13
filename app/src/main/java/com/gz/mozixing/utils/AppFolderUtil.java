@@ -17,7 +17,7 @@ public class AppFolderUtil {
     public static File getAppFolder() {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
 
-            File appFolder = new File(Environment.getExternalStorageDirectory(), "mcash");
+            File appFolder = new File(Environment.getExternalStorageDirectory(), "mozixing");
             return createOnNotFound(appFolder);
 
         } else {

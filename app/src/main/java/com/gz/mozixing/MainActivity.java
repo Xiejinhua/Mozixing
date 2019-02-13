@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private MyPagerAdapter pagerAdapter;
     private ArrayList<ChildrenModel.DataBean.ResultBean> childrenList = new ArrayList<>();
     private LoginModel loginModel;
+    private String parentId;
 
     public static void actionStart(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     @OnClick(R.id.message)
     void addChildren() {
-        BinDingActivity.actionStart(activity, loginModel.getData().getResultX().getParentId());
+        BinDingActivity.actionStart(activity, parentId != null ? parentId : "");
     }
 
 
@@ -90,8 +91,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     public void refreshData() {
         loginModel = new Gson().fromJson(ACacheUtil.get(activity).getAsString(Constant.userLogin), LoginModel.class);
         if (loginModel != null) {
+            parentId = loginModel.getData().getResultX().getParentId();
             Map<String, String> map = new HashMap<>();
-            map.put("parentId", loginModel.getData().getResultX().getParentId());
+            map.put("parentId", parentId);
             ChildrenModel.getResponse(map, new NetWorkCallback<ChildrenModel>() {
                 @Override
                 public void onResponse(ChildrenModel response) {
@@ -128,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         mFragments.clear();
         for (int i = 0; i < childrenList.size(); i++) {
             mTitles.add(childrenList.get(i).getChildrenId());
-            mFragments.add(ChildrenFragment.getInstance(childrenList.get(i).getChildrenId(), loginModel.getData().getResultX().getParentId()));
+            mFragments.add(ChildrenFragment.getInstance(childrenList.get(i).getChildrenId(), parentId));
         }
         if (null == pagerAdapter) {
             pagerAdapter = new MyPagerAdapter(getSupportFragmentManager(), mFragments);
