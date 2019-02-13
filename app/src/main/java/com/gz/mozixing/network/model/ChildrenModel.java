@@ -17,7 +17,7 @@ import java.util.Map;
 public class ChildrenModel extends Response {
 
 
-    private static final String url = Constant.API_Target_url + "test";
+    private static final String url = Constant.API_Target_url + "childrenUser/childrenAll";
     /**
      * code : 1
      * msg : Success
@@ -29,9 +29,9 @@ public class ChildrenModel extends Response {
     private DataBean data;
 
     //请求数据
-    public static void getResponse(Map<String, String> map, NetWorkCallback netWorkCallback) {
+    public static void getResponse(Map<String, String> map, NetWorkCallback<ChildrenModel> netWorkCallback) {
 
-        APIManagerUtil.getInstance().startPostResponse(url, map, netWorkCallback, ChildrenModel.class);
+        APIManagerUtil.getInstance().startMainPostResponse(url, map, netWorkCallback, ChildrenModel.class);
 
     }
 

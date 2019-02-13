@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.gz.mozixing.R;
 import com.gz.mozixing.activity.BaseActivity;
+import com.gz.mozixing.interfaces.TextOnClickListener;
 import com.gz.mozixing.utils.ACacheUtil;
 import com.gz.mozixing.utils.AppFolderUtil;
 import com.gz.mozixing.utils.CapturePhotoHelper;
@@ -85,6 +86,8 @@ public class SettingActivity extends BaseActivity {
     CircleImageView userHead;
     @BindView(R.id.layout_ll)
     LinearLayout layoutLl;
+    @BindView(R.id.user_name)
+    TextView userName;
     private Activity activity;
     private boolean isMessage;
     private String head_bm;
@@ -114,7 +117,7 @@ public class SettingActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.user_head, R.id.two_tv, R.id.three_tv, R.id.five_tv, R.id.ten_tv, R.id.fifteen_tv, R.id.select_bt, R.id.follow_bt})
+    @OnClick({R.id.user_head, R.id.user_name, R.id.two_tv, R.id.three_tv, R.id.five_tv, R.id.ten_tv, R.id.fifteen_tv, R.id.select_bt, R.id.follow_bt})
     void click(View v) {
         switch (v.getId()) {
             case R.id.two_tv://2
@@ -151,8 +154,19 @@ public class SettingActivity extends BaseActivity {
                     }
                 });
                 break;
-            case R.id.user_head://15
+            case R.id.user_head://头像修改
                 showButtomType();
+                break;
+            case R.id.user_name://名字修改
+                RemindDialogUtil.getNameShow(activity, new TextOnClickListener() {
+                    @Override
+                    public void onClickListener(String pin) {
+                        if (!pin.equalsIgnoreCase("")) {
+                            userName.setText(pin);
+
+                        }
+                    }
+                });
                 break;
         }
     }

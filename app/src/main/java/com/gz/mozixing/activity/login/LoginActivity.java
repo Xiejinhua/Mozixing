@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.gz.mozixing.Constant;
 import com.gz.mozixing.MainActivity;
 import com.gz.mozixing.R;
@@ -118,6 +119,7 @@ public class LoginActivity extends BaseActivity {
                 if (response.getData() != null && response.getData().getToken() != null && response.getData().getResultX() != null) {
                     Constant.AuthTokenHolder = response.getData().getToken();
                     ACacheUtil.get(activity).put(Constant.authToken, response.getData().getToken());
+                    ACacheUtil.get(activity).put(Constant.userLogin, new Gson().toJson(response));
                     MainActivity.actionStart(activity);
                 } else {
                     RemindDialogUtil.showEasy(activity, response.getMsg());

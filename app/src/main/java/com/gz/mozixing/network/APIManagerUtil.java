@@ -52,6 +52,51 @@ public class APIManagerUtil {
     private static boolean isFinsh = false;
     private static boolean isCustom = false;
 
+    public void startMainPostResponse(String url, Map<String, String> params, final NetWorkCallback callback, final Class requestModel) {
+        isCustom = false;
+        isFinsh = false;
+        try {
+            if (isCustom) {
+                WaitingDialogUtil.show(ActivityUtil.getActivity());
+            }
+            params = getGreenMap(params);
+            NetWorkUtil.getInstance().startPostResponse(url, params, getHeader(), new NetWorkCallback() {
+                @Override
+                public void onResponse(Object response) {
+                    WaitingDialogUtil.cancel();
+                    if (response != null) {
+                        try {
+                            JSONObject json;
+                            json = new JSONObject((String) response);
+                            if (!json.isNull("code")) {
+                                if (isRight(ActivityUtil.getActivity(), json.optString("code"), json.optString("msg"))) {
+                                    Gson gson = new GsonBuilder().registerTypeAdapterFactory(new NullDoubleToEmptyAdapterFactory()).registerTypeAdapterFactory(new NullBooleanToEmptyAdapterFactory()).registerTypeAdapterFactory(new NullIntgerToEmptyAdapterFactory()).registerTypeAdapterFactory(new NullStringToEmptyAdapterFactory()).create();
+                                    callback.onResponse(gson.fromJson(json.toString(), requestModel));
+                                }
+                            } else {
+                                Gson gson = new GsonBuilder().registerTypeAdapterFactory(new NullDoubleToEmptyAdapterFactory()).registerTypeAdapterFactory(new NullBooleanToEmptyAdapterFactory()).registerTypeAdapterFactory(new NullIntgerToEmptyAdapterFactory()).registerTypeAdapterFactory(new NullStringToEmptyAdapterFactory()).create();
+                                callback.onResponse(gson.fromJson(json.toString(), requestModel));
+                            }
+                        } catch (Exception e) {
+                            callback.onFailure(e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    WaitingDialogUtil.cancel();
+                    callback.onFailure(message);
+                }
+
+            });
+        } catch (Exception e) {
+            WaitingDialogUtil.cancel();
+            e.printStackTrace();
+            callback.onFailure(e.getLocalizedMessage());
+        }
+    }
 
     public void startPostResponse(String url, Map<String, String> params, final NetWorkCallback callback, final Class requestModel) {
         isCustom = true;
