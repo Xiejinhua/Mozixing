@@ -8,14 +8,16 @@ import com.zhy.http.okhttp.request.RequestCall;
 import java.util.Map;
 
 /**
+ * 取消儿童关注的接口
+ *
  * @author Alex
  * @since 19/1/30
  */
 
-public class BinDingModel extends Response {
+public class UpdateCancelFollowModel extends Response {
 
 
-    private static final String url = Constant.API_Target_url + "childrenUser/bindingChildren";
+    private static final String url = Constant.API_Target_url + "childrenUser/updateCancelFollow";
     /**
      * code : 1
      * msg : Success
@@ -27,9 +29,9 @@ public class BinDingModel extends Response {
     private DataBean data;
 
     //请求数据
-    public static void getResponse(Map<String, String> map, NetWorkCallback<BinDingModel> netWorkCallback) {
+    public static void getResponse(Map<String, String> map, NetWorkCallback<UpdateCancelFollowModel> netWorkCallback) {
 
-        APIManagerUtil.getInstance().startPostResponse(url, map, netWorkCallback, BinDingModel.class);
+        APIManagerUtil.getInstance().startPostResponse(url, map, netWorkCallback, UpdateCancelFollowModel.class);
 
     }
 

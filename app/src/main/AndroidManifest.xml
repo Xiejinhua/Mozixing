@@ -87,7 +87,7 @@
         </activity>
         <!-- 配置glide加载https所需要的GlideModule -->
         <meta-data
-            android:name="com.linktu.linktuwallet.util.okhttpsGlide.OkHttpGlideModule"
+            android:name="com.gz.mozixing.utils.okhttpsGlide.OkHttpGlideModule"
             android:value="GlideModule" />
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -115,7 +115,9 @@
         <activity
             android:name=".activity.setting.BinDingActivity"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".activity.login.ChangePwdActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

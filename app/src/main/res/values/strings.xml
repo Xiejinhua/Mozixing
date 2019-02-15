@@ -4,4 +4,60 @@
     <string name="cancel">取消</string>
     <string name="ok">确定</string>
 
+
+    <string name="healthy">健康</string>
+    <string name="low_fever">低烧</string>
+    <string name="high_fever">高烧</string>
+    <string name="user_name">姓名：</string>
+    <string name="user_name_hint">请填写姓名</string>
+    <string name="sex">性别：</string>
+    <string name="man">男</string>
+    <string name="woman">女</string>
+    <string name="phone_number">手机号码：</string>
+    <string name="phone_number_hint">请填写手机号码</string>
+    <string name="phone_number_r_hint">请填写正确的手机号码</string>
+    <string name="weight">体重：</string>
+    <string name="weight_hint">请填写体重</string>
+    <string name="kg">kg</string>
+    <string name="height">身高：</string>
+    <string name="height_hint">请填写身高</string>
+    <string name="cm">cm</string>
+    <string name="birthday">出生日期：</string>
+    <string name="birthday_hint">请选择时间</string>
+    <string name="binding">绑定</string>
+    <string name="old_password">旧密码：</string>
+    <string name="new_password">新密码：</string>
+    <string name="modify">修改</string>
+    <string name="login">登录</string>
+    <string name="not_yet_a_member">还不是会员？</string>
+    <string name="register">注册</string>
+    <string name="forget_password">忘记密码？</string>
+    <string name="change_password">修改密码</string>
+    <string name="upload_time">上传时间</string>
+    <string name="minute">分钟</string>
+    <string name="minute_hint">上传时间越频繁,续航时间会越短哦</string>
+    <string name="early_warning_settings">预警设置</string>
+    <string name="sms_notification">短信通知</string>
+    <string name="remove_concerns">取消关注</string>
+    <string name="password">密码：</string>
+    <string name="qq">QQ：</string>
+    <string name="qq_hint">请填写QQ号码</string>
+    <string name="info">信息</string>
+    <string name="camera">拍照</string>
+    <string name="photo">相册</string>
+    <string name="please_enter_your_account_number">请输入账号</string>
+    <string name="passwd_error">格式无效,密码大于6位</string>
+    <string name="login_hint">注册成功，你可以登陆了。</string>
+    <string name="yes_no_logut_register">是否退出注册？</string>
+    <string name="binding_child_information">绑定孩子信息</string>
+    <string name="please_choose_your_avatar">请选择头像</string>
+    <string name="binding_success">绑定成功</string>
+    <string name="setting">设置</string>
+    <string name="whether_to_cancel_the_concern">是否取消关注</string>
+    <string name="Whether_to_log_out_or_not">是否退出登录?</string>
+    <string name="name_change_success">姓名修改成功!</string>
+    <string name="successful_removal_of_attention">成功取消关注!</string>
+    <string name="successful_modification_of_the_avatar">头像修改成功!</string>
+
+
 </resources>

@@ -69,10 +69,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="5dp"
-                android:text="佩琪"
+                android:text=""
                 android:textSize="14sp" />
 
             <LinearLayout
+                android:id="@+id/temperature_ll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -93,6 +94,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/c_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -109,7 +111,7 @@
                 android:layout_marginBottom="30dp"
                 android:background="@drawable/add_email_eidt_shape_green"
                 android:gravity="center"
-                android:text="健康"
+                android:text="@string/healthy"
                 android:textColor="@color/colorWhite"
                 android:textSize="14sp" />
 
@@ -138,7 +140,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
-                        android:text="1月17号"
+                        android:text=""
                         android:textColor="@color/colorWhite"
                         android:textSize="16sp" />
                 </LinearLayout>

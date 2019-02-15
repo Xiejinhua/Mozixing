@@ -175,13 +175,14 @@ public class RemindDialogUtil {
 
 
     //输入名字
-    public static void getNameShow(Activity activity, final TextOnClickListener listener) {
+    public static void getNameShow(Activity activity, String name, final TextOnClickListener listener) {
         if (activity != null) {
             LayoutInflater inflater = (LayoutInflater) activity.getSystemService(activity.LAYOUT_INFLATER_SERVICE);
             View view = inflater.inflate(R.layout.dialog_name_view, null);
             TextView cancel_button = (TextView) view.findViewById(R.id.cancel_button);
             final TextView ok_button = (TextView) view.findViewById(R.id.ok_button);
             final EditText pin_text = (EditText) view.findViewById(R.id.pin_text);
+            pin_text.setText(name);
             if (!isShow) {
                 isShow = true;
                 dialog = new DialogUtil(activity, view, true);

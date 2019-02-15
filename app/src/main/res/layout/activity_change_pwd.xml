@@ -118,11 +118,11 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="@string/password"
+                        android:text="@string/old_password"
                         android:textSize="14sp" />
 
                     <EditText
-                        android:id="@+id/login_ed_pin"
+                        android:id="@+id/old_login_ed_pin"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginTop="1dp"
@@ -155,163 +155,20 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="@string/user_name"
+                        android:text="@string/new_password"
                         android:textSize="14sp" />
 
                     <EditText
-                        android:id="@+id/user_name"
+                        android:id="@+id/new_login_ed_pin"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginTop="1dp"
                         android:layout_weight="3"
                         android:background="@color/colorWhite"
-                        android:hint="@string/user_name_hint"
-                        android:inputType="text"
-                        android:maxLength="10"
+                        android:hint="xxxxxx"
+                        android:inputType="textPassword"
+                        android:maxLength="16"
                         android:singleLine="true"
-                        android:textSize="14sp" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@mipmap/link" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="@string/sex"
-                        android:textSize="14sp" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="3"
-                        android:gravity="center_vertical">
-
-                        <LinearLayout
-                            android:id="@+id/man_ll"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center">
-
-                            <TextView
-                                android:id="@+id/man_dot"
-                                android:layout_width="15dp"
-                                android:layout_height="15dp"
-                                android:background="@drawable/dot_selected" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dp"
-                                android:text="@string/man"
-                                android:textSize="14sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/woman_ll"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="30dp"
-                            android:gravity="center">
-
-                            <TextView
-                                android:id="@+id/women_dot"
-                                android:layout_width="15dp"
-                                android:layout_height="15dp"
-                                android:background="@drawable/dot_unselected" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dp"
-                                android:text="@string/woman"
-                                android:textSize="14sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@mipmap/link" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="@string/qq"
-                        android:textSize="14sp" />
-
-                    <EditText
-                        android:id="@+id/qq_number"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="1dp"
-                        android:layout_weight="3"
-                        android:background="@color/colorWhite"
-                        android:hint="@string/qq_hint"
-                        android:inputType="number"
-                        android:singleLine="true"
-                        android:textSize="14sp" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@mipmap/link" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="@string/birthday"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/birthday_tv"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="1dp"
-                        android:layout_weight="3"
-                        android:background="@color/colorWhite"
-                        android:gravity="center_vertical"
-                        android:hint="@string/birthday_hint"
                         android:textSize="14sp" />
 
                 </LinearLayout>
@@ -319,7 +176,7 @@
 
 
             <TextView
-                android:id="@+id/login_bt"
+                android:id="@+id/change_password_bt"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_marginLeft="30dp"
@@ -327,7 +184,7 @@
                 android:layout_marginRight="30dp"
                 android:background="@drawable/ten_blue_shape"
                 android:gravity="center"
-                android:text="@string/register"
+                android:text="@string/modify"
                 android:textColor="@color/colorWhite"
                 android:textSize="16sp" />
 

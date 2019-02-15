@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -18,12 +19,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.gz.mozixing.activity.SplashActivity;
 import com.gz.mozixing.activity.setting.BinDingActivity;
 import com.gz.mozixing.event.SwitchEvent;
 import com.gz.mozixing.fragment.ChildrenFragment;
 import com.gz.mozixing.network.model.ChildrenModel;
 import com.gz.mozixing.network.model.LoginModel;
 import com.gz.mozixing.network.model.NetWorkCallback;
+import com.gz.mozixing.network.request.Logout;
 import com.gz.mozixing.utils.ACacheUtil;
 import com.gz.mozixing.utils.ActivityUtil;
 import com.gz.mozixing.utils.PermissionUtils;
@@ -49,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     ViewPager vp;
     @BindView(R.id.none_message)
     ImageView noneMessage;
+    @BindView(R.id.logout)
+    ImageView logout;
 
     private Activity activity;
     private ArrayList<Fragment> mFragments = new ArrayList<>();
@@ -75,8 +80,25 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         ActivityUtil.init(this);
         requestPermission();
         message.setVisibility(View.VISIBLE);
+        logout.setVisibility(View.VISIBLE);
         EventBus.getDefault().register(this);//注册eventBus
+        String token = ACacheUtil.get(activity).getAsString(Constant.authToken);
+        if (token != null && !token.equalsIgnoreCase("") && Constant.AuthTokenHolder.equalsIgnoreCase("")) {
+            Constant.AuthTokenHolder = token;
+        }
         refreshData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityUtil.init(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ActivityUtil.init(this);
     }
 
     @OnClick(R.id.message)
@@ -84,6 +106,31 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         BinDingActivity.actionStart(activity, parentId != null ? parentId : "");
     }
 
+    @OnClick(R.id.logout)
+    void logout() {
+        RemindDialogUtil.showYesNo(activity, getString(R.string.Whether_to_log_out_or_not), new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map<String, String> map = new HashMap<>();
+                map.put("parentId", parentId);
+                Logout.getResponse(map, new NetWorkCallback() {
+                    @Override
+                    public void onResponse(Object response) {
+                        Constant.AuthTokenHolder = "";
+                        ACacheUtil.get(activity).put(Constant.authToken, "");
+                        ACacheUtil.get(activity).put(Constant.userLogin, "");
+                        SplashActivity.actionStart(activity);
+                        activity.finish();
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        RemindDialogUtil.showEasy(activity, message);
+                    }
+                });
+            }
+        });
+    }
 
     /**
      * 获取数据
@@ -97,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             ChildrenModel.getResponse(map, new NetWorkCallback<ChildrenModel>() {
                 @Override
                 public void onResponse(ChildrenModel response) {
+                    childrenList.clear();
                     if (response.getData() != null && response.getData().getResultX() != null && response.getData().getResultX().size() > 0) {
                         vp.setVisibility(View.VISIBLE);
                         noneMessage.setVisibility(View.GONE);
@@ -271,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);//注册eventBus
+        EventBus.getDefault().unregister(this);//注销eventBus
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

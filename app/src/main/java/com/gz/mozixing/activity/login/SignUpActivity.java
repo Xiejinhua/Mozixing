@@ -21,9 +21,6 @@ import com.gz.mozixing.network.model.RegisterModel;
 import com.gz.mozixing.utils.PickerUtil;
 import com.gz.mozixing.utils.RemindDialogUtil;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,7 +80,7 @@ public class SignUpActivity extends BaseActivity {
         activity = this;
         setContentView(R.layout.activity_sign_up);
         ButterKnife.bind(this);
-        setupToolbar("注册", new View.OnClickListener() {
+        setupToolbar(getString(R.string.register), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finishSignUp();
@@ -139,32 +136,32 @@ public class SignUpActivity extends BaseActivity {
         String birthday = birthdayTv.getText().toString().trim();
 
         if (phone.equalsIgnoreCase("")) {
-            Toast.makeText(this, "请填写手机号码", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.phone_number_hint), Toast.LENGTH_SHORT).show();
             userMobileNo.requestFocus();
             return;
         }
         if (!isMobileNO(phone)) {
-            Toast.makeText(this, "请填写正确的手机号码", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.phone_number_r_hint), Toast.LENGTH_SHORT).show();
             userMobileNo.requestFocus();
             return;
         }
         if (passWord.length() < 6) {
-            Toast.makeText(this, "格式无效,密码大于6位", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.passwd_error), Toast.LENGTH_SHORT).show();
             loginEdPin.requestFocus();
             return;
         }
         if (name.equalsIgnoreCase("")) {
-            Toast.makeText(this, "请填写姓名", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.user_name_hint), Toast.LENGTH_SHORT).show();
             userName.requestFocus();
             return;
         }
         if (qq.equalsIgnoreCase("")) {
-            Toast.makeText(this, "请填写QQ号码", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.qq_hint), Toast.LENGTH_SHORT).show();
             qqNumber.requestFocus();
             return;
         }
         if (birthday.equalsIgnoreCase("")) {
-            Toast.makeText(this, "请选择出生日期", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.birthday_hint), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -179,7 +176,7 @@ public class SignUpActivity extends BaseActivity {
         RegisterModel.getResponse(map, new NetWorkCallback<RegisterModel>() {
             @Override
             public void onResponse(RegisterModel response) {
-                RemindDialogUtil.show(activity, "注册成功吗，你可以登陆了。", new View.OnClickListener() {
+                RemindDialogUtil.show(activity, getString(R.string.login_hint), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         finish();
@@ -220,7 +217,7 @@ public class SignUpActivity extends BaseActivity {
      * 退出
      */
     private void finishSignUp() {
-        RemindDialogUtil.showYesNo(activity, "是否退出注册？", new View.OnClickListener() {
+        RemindDialogUtil.showYesNo(activity, getString(R.string.yes_no_logut_register), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();

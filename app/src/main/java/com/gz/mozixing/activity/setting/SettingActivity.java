@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
@@ -25,11 +26,21 @@ import android.widget.Toast;
 
 import com.gz.mozixing.R;
 import com.gz.mozixing.activity.BaseActivity;
+import com.gz.mozixing.adapter.MinuteAdapter;
+import com.gz.mozixing.event.SwitchEvent;
+import com.gz.mozixing.event.UpdateEvent;
+import com.gz.mozixing.interfaces.MyOnClickListener;
 import com.gz.mozixing.interfaces.TextOnClickListener;
+import com.gz.mozixing.network.model.MinuteModel;
+import com.gz.mozixing.network.model.NetWorkCallback;
+import com.gz.mozixing.network.model.UpdateCancelFollowModel;
+import com.gz.mozixing.network.model.UpdateChildrenNameModel;
+import com.gz.mozixing.network.model.UpdateChildrenPhotoModel;
 import com.gz.mozixing.utils.ACacheUtil;
 import com.gz.mozixing.utils.AppFolderUtil;
 import com.gz.mozixing.utils.CapturePhotoHelper;
 import com.gz.mozixing.utils.CircleImageView;
+import com.gz.mozixing.utils.CustomGridLayoutRecyclerView;
 import com.gz.mozixing.utils.GetImagePath;
 import com.gz.mozixing.utils.RemindDialogUtil;
 import com.gz.mozixing.utils.WaitingDialogUtil;
@@ -38,8 +49,13 @@ import com.gz.mozixing.utils.zibinluban.OnCompressListener;
 import com.gz.mozixing.utils.zibinluban.UriToPathUtil;
 import com.warkiz.widget.IndicatorSeekBar;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,18 +74,6 @@ public class SettingActivity extends BaseActivity {
     RelativeLayout secondBarBack;
     @BindView(R.id.second_bar_title)
     TextView secondBarTitle;
-    @BindView(R.id.two_tv)
-    TextView twoTv;
-    @BindView(R.id.three_tv)
-    TextView threeTv;
-    @BindView(R.id.five_tv)
-    TextView fiveTv;
-    @BindView(R.id.ten_tv)
-    TextView tenTv;
-    @BindView(R.id.fifteen_tv)
-    TextView fifteenTv;
-    @BindView(R.id.minute_tv)
-    TextView minuteTv;
     @BindView(R.id.tips_tv)
     TextView tipsTv;
     @BindView(R.id.select_iv)
@@ -88,12 +92,21 @@ public class SettingActivity extends BaseActivity {
     LinearLayout layoutLl;
     @BindView(R.id.user_name)
     TextView userName;
+    @BindView(R.id.recyclerview)
+    CustomGridLayoutRecyclerView recyclerview;
     private Activity activity;
     private boolean isMessage;
     private String head_bm;
+    private String[] MinuteList = {"2", "3", "5", "10", "15"};
+    private ArrayList<MinuteModel> list = new ArrayList<>();
+    private MinuteAdapter mMinuteAdapter;
+    private String uploadTime = "5";
+    private String childrenId, parentId;
 
-    public static void actionStart(Activity activity) {
+    public static void actionStart(Activity activity, String children_id, String parentId) {
         Intent intent = new Intent(activity, SettingActivity.class);
+        intent.putExtra("children_id", children_id);
+        intent.putExtra("parentId", parentId);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         activity.startActivity(intent);
@@ -106,35 +119,57 @@ public class SettingActivity extends BaseActivity {
         activity = this;
         setContentView(R.layout.activity_setting);
         ButterKnife.bind(this);
-        setupToolbar("设置");
+        setupToolbar(getString(R.string.setting));
+        childrenId = getIntent().getStringExtra("children_id");
+        parentId = getIntent().getStringExtra("parentId");
 
+        setView();
         setSeekbar();
+        refreshData();
+    }
+
+    private void setView() {
+        //设置布局管理器
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerview.setLayoutManager(linearLayoutManager);
+        // 解决滑动不流畅
+        recyclerview.setNestedScrollingEnabled(false);
+        mMinuteAdapter = new MinuteAdapter(activity, list, new MyOnClickListener() {
+            @Override
+            public void onClickListener(int position) {
+                for (MinuteModel minuteModel : list) {
+                    minuteModel.setSelect(false);
+                }
+                list.get(position).setSelect(true);
+                uploadTime = list.get(position).getMinute();
+                mMinuteAdapter.notifyDataSetChanged();
+            }
+        });
+
+        recyclerview.setAdapter(mMinuteAdapter);
     }
 
     @Override
     public void refreshData() {
         super.refreshData();
-
+        for (int i = 0; i < 5; i++) {
+            MinuteModel minuteModel = new MinuteModel();
+            minuteModel.setMinute(MinuteList[i]);
+            minuteModel.setSelect(false);
+            list.add(minuteModel);
+        }
+        for (MinuteModel minuteModel : list) {
+            if (uploadTime.equalsIgnoreCase(minuteModel.getMinute())) {
+                minuteModel.setSelect(true);
+            }
+        }
+        mMinuteAdapter.notifyDataSetChanged();
     }
 
-    @OnClick({R.id.user_head, R.id.user_name, R.id.two_tv, R.id.three_tv, R.id.five_tv, R.id.ten_tv, R.id.fifteen_tv, R.id.select_bt, R.id.follow_bt})
+    @OnClick({R.id.user_head, R.id.user_name, R.id.select_bt, R.id.follow_bt})
     void click(View v) {
         switch (v.getId()) {
-            case R.id.two_tv://2
-                setMinute(2);
-                break;
-            case R.id.three_tv://3
-                setMinute(3);
-                break;
-            case R.id.five_tv://5
-                setMinute(5);
-                break;
-            case R.id.ten_tv://10
-                setMinute(10);
-                break;
-            case R.id.fifteen_tv://15
-                setMinute(15);
-                break;
             case R.id.select_bt://短信
                 if (isMessage) {
                     isMessage = false;
@@ -147,10 +182,10 @@ public class SettingActivity extends BaseActivity {
                 }
                 break;
             case R.id.follow_bt://关注
-                RemindDialogUtil.showYesNo(activity, "是否取消关注", new View.OnClickListener() {
+                RemindDialogUtil.showYesNo(activity, getString(R.string.whether_to_cancel_the_concern), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(activity, "成功取消关注", Toast.LENGTH_SHORT).show();
+                        updateCancelFollow();
                     }
                 });
                 break;
@@ -158,12 +193,13 @@ public class SettingActivity extends BaseActivity {
                 showButtomType();
                 break;
             case R.id.user_name://名字修改
-                RemindDialogUtil.getNameShow(activity, new TextOnClickListener() {
+                String name = userName.getText().toString().trim();
+                RemindDialogUtil.getNameShow(activity, name, new TextOnClickListener() {
                     @Override
                     public void onClickListener(String pin) {
                         if (!pin.equalsIgnoreCase("")) {
                             userName.setText(pin);
-
+                            updateName(pin);
                         }
                     }
                 });
@@ -172,44 +208,48 @@ public class SettingActivity extends BaseActivity {
     }
 
     /**
-     * 设置上传时间UI
+     * 修改名字
      */
-    private void setMinute(int minute) {
-        twoTv.setTextColor(getResources().getColor(R.color.color_666666));
-        twoTv.setBackgroundResource(R.drawable.five_white_shape);
-        threeTv.setTextColor(getResources().getColor(R.color.color_666666));
-        threeTv.setBackgroundResource(R.drawable.five_white_shape);
-        fiveTv.setTextColor(getResources().getColor(R.color.color_666666));
-        fiveTv.setBackgroundResource(R.drawable.five_white_shape);
-        tenTv.setTextColor(getResources().getColor(R.color.color_666666));
-        tenTv.setBackgroundResource(R.drawable.five_white_shape);
-        fifteenTv.setTextColor(getResources().getColor(R.color.color_666666));
-        fifteenTv.setBackgroundResource(R.drawable.five_white_shape);
-        switch (minute) {
-            case 2:
-                twoTv.setTextColor(getResources().getColor(R.color.colorWhite));
-                twoTv.setBackgroundResource(R.drawable.five_blue_shape);
-                break;
-            case 3:
-                threeTv.setTextColor(getResources().getColor(R.color.colorWhite));
-                threeTv.setBackgroundResource(R.drawable.five_blue_shape);
-                break;
-            case 5:
-                fiveTv.setTextColor(getResources().getColor(R.color.colorWhite));
-                fiveTv.setBackgroundResource(R.drawable.five_blue_shape);
-                break;
-            case 10:
-                tenTv.setTextColor(getResources().getColor(R.color.colorWhite));
-                tenTv.setBackgroundResource(R.drawable.five_blue_shape);
-                break;
-            case 15:
-                fifteenTv.setTextColor(getResources().getColor(R.color.colorWhite));
-                fifteenTv.setBackgroundResource(R.drawable.five_blue_shape);
-                break;
+    private void updateName(String name) {
+        Map<String, String> map = new HashMap<>();
+        map.put("childrenId", childrenId);
+        map.put("parentId", parentId);
+        map.put("name", name);
+        UpdateChildrenNameModel.getResponse(map, new NetWorkCallback<UpdateChildrenNameModel>() {
+            @Override
+            public void onResponse(UpdateChildrenNameModel response) {
+                EventBus.getDefault().post(new UpdateEvent("true"));
+                Toast.makeText(activity, getString(R.string.name_change_success), Toast.LENGTH_SHORT).show();
+            }
 
-        }
+            @Override
+            public void onFailure(String message) {
+                RemindDialogUtil.showEasy(activity, message);
+            }
+        });
     }
 
+    /**
+     * 取消关注
+     */
+    private void updateCancelFollow() {
+        Map<String, String> map = new HashMap<>();
+        map.put("childrenId", childrenId);
+        map.put("parentId", parentId);
+        UpdateCancelFollowModel.getResponse(map, new NetWorkCallback<UpdateCancelFollowModel>() {
+            @Override
+            public void onResponse(UpdateCancelFollowModel response) {
+                EventBus.getDefault().post(new SwitchEvent("true"));
+                Toast.makeText(activity, getString(R.string.successful_removal_of_attention), Toast.LENGTH_SHORT).show();
+                finish();
+            }
+
+            @Override
+            public void onFailure(String message) {
+                RemindDialogUtil.showEasy(activity, message);
+            }
+        });
+    }
 
     /**
      * 设置滑动条
@@ -333,6 +373,7 @@ public class SettingActivity extends BaseActivity {
                     public void onSuccess(File file) {
 //                        int a = mCapturePhotoHelper.getBitmapDegree(file.getAbsolutePath());
                         idcard_head_bm = BitmapFactory.decodeFile(file.getAbsolutePath());
+                        userHead.setImageBitmap(idcard_head_bm);
                         head_bm = getStringImage(idcard_head_bm);
                         new Thread(new IdcardHeadRunnable()).start();
 //                        LogUtil.d("数据", "" + a);
@@ -368,6 +409,7 @@ public class SettingActivity extends BaseActivity {
                     public void onSuccess(File file) {
 //                        int a = mCapturePhotoHelper.getBitmapDegree(file.getAbsolutePath());
                         idcard_head_bm = BitmapFactory.decodeFile(file.getAbsolutePath());
+                        userHead.setImageBitmap(idcard_head_bm);
                         head_bm = getStringImage(idcard_head_bm);
                         new Thread(new IdcardHeadRunnable()).start();
 //                        LogUtil.d("数据", "" + a);
@@ -394,12 +436,33 @@ public class SettingActivity extends BaseActivity {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    userHead.setImageBitmap(idcard_head_bm);
-                    WaitingDialogUtil.cancel();
+                    updatePhoto();
                 }
             });
 
         }
+    }
+
+    /**
+     * 修改头像
+     */
+    private void updatePhoto() {
+        Map<String, String> map = new HashMap<>();
+        map.put("childrenId", childrenId);
+        map.put("parentId", parentId);
+        map.put("photo", head_bm);
+        UpdateChildrenPhotoModel.getResponse(map, new NetWorkCallback<UpdateChildrenPhotoModel>() {
+            @Override
+            public void onResponse(UpdateChildrenPhotoModel response) {
+                EventBus.getDefault().post(new UpdateEvent("true"));
+                Toast.makeText(activity, getString(R.string.successful_modification_of_the_avatar), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(String message) {
+                RemindDialogUtil.showEasy(activity, message);
+            }
+        });
     }
 
     /**

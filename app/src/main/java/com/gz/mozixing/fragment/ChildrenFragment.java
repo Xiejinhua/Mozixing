@@ -1,29 +1,15 @@
 package com.gz.mozixing.fragment;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
-import android.util.Base64;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,26 +22,25 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.gz.mozixing.MainActivity;
 import com.gz.mozixing.R;
 import com.gz.mozixing.activity.setting.SettingActivity;
-import com.gz.mozixing.utils.ACacheUtil;
-import com.gz.mozixing.utils.AppFolderUtil;
-import com.gz.mozixing.utils.CapturePhotoHelper;
-import com.gz.mozixing.utils.GetImagePath;
+import com.gz.mozixing.event.UpdateEvent;
+import com.gz.mozixing.network.model.ChildrenInfoModel;
+import com.gz.mozixing.network.model.NetWorkCallback;
 import com.gz.mozixing.utils.LoadingImageUtil;
-import com.gz.mozixing.utils.LogUtil;
+import com.gz.mozixing.utils.RemindDialogUtil;
 import com.gz.mozixing.utils.WaitingDialogUtil;
-import com.gz.mozixing.utils.zibinluban.Luban;
-import com.gz.mozixing.utils.zibinluban.OnCompressListener;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-
-import static android.app.Activity.RESULT_OK;
 
 /**
  * 儿童页面
@@ -87,14 +72,19 @@ public class ChildrenFragment extends Fragment {
     View rootView;
     @BindView(R.id.layout_ll)
     LinearLayout layoutLl;
+    @BindView(R.id.c_tv)
+    TextView cTv;
+    @BindView(R.id.temperature_ll)
+    LinearLayout temperatureLl;
 
-    private String children_id,parentId;
+    private String childrenId, parentId;
     private static final String CHILDREN_ID = "Children_Id";
     private static final String PARENT_ID = "Parent_Id";
     private Activity activity;
-    private String[] xDatas = {"00:00", "6:00", "12:00", "18:00", "24:00"};
-    private double[] yDatas = {10.4, 20.4, 36.3, 33.1, 25.5};
+    private ArrayList<ChildrenInfoModel.DataBean.ResultBean> list = new ArrayList<>();
     Unbinder bind;
+//        private double[] yDatas = {10.4, 20.4, 36.3, 33.1, 25.5};
+//        private String[] xDatas = {"00:00", "6:00", "12:00", "18:00", "24:00"};
 
     public static ChildrenFragment getInstance(String id, String parentId) {
         ChildrenFragment sf = new ChildrenFragment();
@@ -110,7 +100,7 @@ public class ChildrenFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         if (bundle != null) {
-            children_id = bundle.getString(CHILDREN_ID);
+            childrenId = bundle.getString(CHILDREN_ID);
             parentId = bundle.getString(PARENT_ID);
         }
     }
@@ -120,11 +110,75 @@ public class ChildrenFragment extends Fragment {
         activity = (MainActivity) getActivity();
         rootView = inflater.inflate(R.layout.fragment_children, null);
         bind = ButterKnife.bind(this, rootView);
-
-        LineData mLineData = getLineData();
-        showChart(chart, mLineData);
-
+        EventBus.getDefault().register(this);//注册eventBus
+        getData();
         return rootView;
+    }
+
+    /**
+     * 获取数据
+     */
+    private void getData() {
+        Map<String, String> map = new HashMap<>();
+        map.put("childrenId", childrenId);
+        map.put("parentId", parentId);
+        ChildrenInfoModel.getResponse(map, new NetWorkCallback<ChildrenInfoModel>() {
+            @Override
+            public void onResponse(ChildrenInfoModel response) {
+                setView(response);
+                list.clear();
+                if (response.getData().getResultX() != null && response.getData().getResultX().size() > 0) {
+                    list.addAll(response.getData().getResultX());
+                }
+                LineData mLineData = getLineData();
+                showChart(chart, mLineData);
+//                chart.invalidate(); //用来刷新图表
+            }
+
+            @Override
+            public void onFailure(String message) {
+                RemindDialogUtil.showEasy(activity, message);
+            }
+        });
+    }
+
+    /**
+     *
+     */
+    private void setView(ChildrenInfoModel model) {
+        LoadingImageUtil.loadingCircle(userHead, model.getData().getPhoto());
+        userName.setText(model.getData().getName());
+        if (model.getData().getTemperature() != null && !model.getData().getTemperature().equalsIgnoreCase("")) {
+            temperatureTv.setText(model.getData().getTemperature());
+        } else {
+            temperatureTv.setText("0");
+        }
+        timeTv.setText(model.getData().getTime());
+        switch (model.getData().getState()) {//1 代表健康 , 2 代表低烧 ,  3 代表高烧
+            case 1:
+                temperatureLl.setBackgroundResource(R.mipmap.ic_temperature);
+                temperatureTv.setTextColor(activity.getResources().getColor(R.color.color_green));
+                cTv.setTextColor(activity.getResources().getColor(R.color.color_green));
+                bodyCondition.setText(activity.getString(R.string.healthy));
+                bodyCondition.setBackgroundResource(R.drawable.add_email_eidt_shape_green);
+                break;
+            case 2:
+                temperatureLl.setBackgroundResource(R.mipmap.ic_temperature_o);
+                temperatureTv.setTextColor(activity.getResources().getColor(R.color.color_FDA62A));
+                cTv.setTextColor(activity.getResources().getColor(R.color.color_FDA62A));
+                bodyCondition.setText(activity.getString(R.string.low_fever));
+                bodyCondition.setBackgroundResource(R.drawable.add_email_eidt_shape_o);
+                break;
+            case 3:
+                temperatureLl.setBackgroundResource(R.mipmap.ic_temperature_r);
+                temperatureTv.setTextColor(activity.getResources().getColor(R.color.color_FB3C2A));
+                cTv.setTextColor(activity.getResources().getColor(R.color.color_FB3C2A));
+                bodyCondition.setText(activity.getString(R.string.high_fever));
+                bodyCondition.setBackgroundResource(R.drawable.add_email_eidt_shape_r);
+                break;
+
+        }
+
     }
 
     // 设置显示的样式
@@ -179,23 +233,23 @@ public class ChildrenFragment extends Fragment {
      * 生成一个数据
      */
     private LineData getLineData() {
-        String[] xData = xDatas;//获得的数据，下同
-        double[] yData = yDatas;//
-        for (int i = 0; i < yData.length; i++) {
-            System.out.println("lineChart_yData---:" + yData);
-        }
-        int dataLength = xData.length;
+//        String[] xData = xDatas;//获得的数据，下同
+//        double[] yData = yDatas;//
+//        for (int i = 0; i < yData.length; i++) {
+//            System.out.println("lineChart_yData---:" + yData);
+//        }
+        int dataLength = list.size();
         ArrayList<String> xValues = new ArrayList<String>();
         for (int i = 0; i < dataLength; i++) {
             // x轴显示的数据，这里默认使用数字下标显示
             // xValues.add("" + i);
-            xValues.add(xData[i]);
+            xValues.add(list.get(i).getTime());
         }
 
         // y轴的数据
         ArrayList<Entry> yValues = new ArrayList<Entry>();
         for (int i = 0; i < dataLength; i++) {
-            yValues.add(new Entry((float) yData[i], i));
+            yValues.add(new Entry(Float.valueOf(list.get(i).getTemperature()), i));
         }
 
         // y轴的数据集合
@@ -220,38 +274,40 @@ public class ChildrenFragment extends Fragment {
         return lineData;
     }
 
-    /**
-     * @param strings 字符串转换成float
-     */
-    public Float[] stringTofloat(String[] strings) {
-        Float[] data = new Float[strings.length];
-        for (int i = 0; i < strings.length; i++) {
-            data[i] = Float.valueOf(strings[i].trim().replace("℃", ""));
-            System.out.println("转换后的数据:" + data[i]);
-        }
-        return data;
-    }
-
 
     @OnClick(R.id.setting_bt)
     void setting() {//设置
-        SettingActivity.actionStart(activity);
+        SettingActivity.actionStart(activity, childrenId, parentId);
     }
 
     @OnClick(R.id.map_bt)
     void map() {//地图
-        Toast.makeText(activity, "地图", Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, "功能开发中...", Toast.LENGTH_SHORT).show();
+
     }
 
     @OnClick(R.id.refresh_bt)
     void refresh() {//刷新
-        Toast.makeText(activity, "刷新", Toast.LENGTH_SHORT).show();
+        WaitingDialogUtil.show(activity);
+        getData();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         bind.unbind();
+        EventBus.getDefault().unregister(this);//注销eventBus
     }
 
+
+    /**
+     * @param event
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(UpdateEvent event) {
+        if (event.getMsg() != null && event.getMsg().equalsIgnoreCase("true")) {
+            Toast.makeText(activity, childrenId + "号刷新了", Toast.LENGTH_SHORT).show();
+            getData();
+        }
+    }
 }

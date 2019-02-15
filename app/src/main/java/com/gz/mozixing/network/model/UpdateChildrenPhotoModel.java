@@ -8,14 +8,16 @@ import com.zhy.http.okhttp.request.RequestCall;
 import java.util.Map;
 
 /**
+ * 修改儿童头像的接口
+ *
  * @author Alex
  * @since 19/1/30
  */
 
-public class BinDingModel extends Response {
+public class UpdateChildrenPhotoModel extends Response {
 
 
-    private static final String url = Constant.API_Target_url + "childrenUser/bindingChildren";
+    private static final String url = Constant.API_Target_url + "childrenUser/updateChildrenPhoto";
     /**
      * code : 1
      * msg : Success
@@ -27,9 +29,9 @@ public class BinDingModel extends Response {
     private DataBean data;
 
     //请求数据
-    public static void getResponse(Map<String, String> map, NetWorkCallback<BinDingModel> netWorkCallback) {
+    public static void getResponse(Map<String, String> map, NetWorkCallback<UpdateChildrenPhotoModel> netWorkCallback) {
 
-        APIManagerUtil.getInstance().startPostResponse(url, map, netWorkCallback, BinDingModel.class);
+        APIManagerUtil.getInstance().startMainPostResponse(url, map, netWorkCallback, UpdateChildrenPhotoModel.class);
 
     }
 

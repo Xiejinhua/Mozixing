@@ -55,6 +55,8 @@ public class LoginActivity extends BaseActivity {
     LinearLayout ll2;
     @BindView(R.id.activity_login_page)
     RelativeLayout activityLoginPage;
+    @BindView(R.id.change_password)
+    TextView changePassword;
     private Activity activity;
 
     public static void actionStart(Activity activity) {
@@ -94,17 +96,22 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.forgot_pin_btn)
     void forgot() {//忘记密码
+        Toast.makeText(activity, "功能开发中...", Toast.LENGTH_SHORT).show();
+    }
 
+    @OnClick(R.id.change_password)
+    void changePassword() {//修改密码
+        ChangePwdActivity.actionStart(activity);
     }
 
     private void login(String name, String pwd) {
         if (name.equalsIgnoreCase("")) {
-            Toast.makeText(this, "请输入账号", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, activity.getString(R.string.please_enter_your_account_number), Toast.LENGTH_SHORT).show();
             loginEdMobileNo.requestFocus();
             return;
         }
         if (pwd.length() < 6) {
-            Toast.makeText(this, "格式无效,密码大于6位", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, activity.getString(R.string.passwd_error), Toast.LENGTH_SHORT).show();
             loginEdPin.requestFocus();
             return;
         }
@@ -115,7 +122,7 @@ public class LoginActivity extends BaseActivity {
         LoginModel.getResponse(map, new NetWorkCallback<LoginModel>() {
             @Override
             public void onResponse(LoginModel response) {
-                if (response.getData() != null && response.getData().getToken() != null && response.getData().getResultX() != null) {
+                if (response != null && response.getData() != null && response.getData().getToken() != null && response.getData().getResultX() != null) {
                     Constant.AuthTokenHolder = response.getData().getToken();
                     ACacheUtil.get(activity).put(Constant.authToken, response.getData().getToken());
                     ACacheUtil.get(activity).put(Constant.userLogin, new Gson().toJson(response));

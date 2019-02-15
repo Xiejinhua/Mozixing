@@ -113,7 +113,7 @@ public class BinDingActivity extends BaseActivity {
         activity = this;
         setContentView(R.layout.activity_binding_children);
         ButterKnife.bind(this);
-        setupToolbar("绑定孩子信息");
+        setupToolbar(getString(R.string.binding_child_information));
         parentId = getIntent().getStringExtra("parentId");
     }
 
@@ -152,18 +152,27 @@ public class BinDingActivity extends BaseActivity {
         String birthday = birthdayTv.getText().toString().trim();
 
         if (head_bm == null || head_bm.equalsIgnoreCase("")) {
-            Toast.makeText(this, "请选择头像", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.please_choose_your_avatar), Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (name.equalsIgnoreCase("")) {
-            Toast.makeText(activity, "请填写姓名", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, getString(R.string.user_name_hint), Toast.LENGTH_SHORT).show();
             userName.requestFocus();
             return;
         }
-
+        if (weight.equalsIgnoreCase("")) {
+            Toast.makeText(activity, getString(R.string.weight_hint), Toast.LENGTH_SHORT).show();
+            weightEt.requestFocus();
+            return;
+        }
+        if (height.equalsIgnoreCase("")) {
+            Toast.makeText(activity, getString(R.string.height_hint), Toast.LENGTH_SHORT).show();
+            heightEt.requestFocus();
+            return;
+        }
         if (birthday.equalsIgnoreCase("")) {
-            Toast.makeText(this, "请选择出生日期", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.birthday_hint), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -180,7 +189,7 @@ public class BinDingActivity extends BaseActivity {
         BinDingModel.getResponse(map, new NetWorkCallback<BinDingModel>() {
             @Override
             public void onResponse(BinDingModel response) {
-                RemindDialogUtil.show(activity, "绑定成功", new View.OnClickListener() {
+                RemindDialogUtil.show(activity, getString(R.string.binding_success), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         EventBus.getDefault().post(new SwitchEvent("true"));
@@ -387,14 +396,14 @@ public class BinDingActivity extends BaseActivity {
 
         layout.setBackground(getResources().getDrawable(R.drawable.add_lable_dialog_shape));
         backgroundAlpha(0.4f);
-        final PopupWindow popupWindow = new PopupWindow(layout, layoutLl.getWidth(), LinearLayout.LayoutParams.WRAP_CONTENT);
+        final PopupWindow popupWindow = new PopupWindow(layout, ll1.getWidth(), LinearLayout.LayoutParams.WRAP_CONTENT);
 
         popupWindow.setFocusable(true);
         popupWindow.setOutsideTouchable(true);
         popupWindow.setBackgroundDrawable(new BitmapDrawable());
 
         int[] location = new int[2];
-        layoutLl.getLocationOnScreen(location);
+        ll1.getLocationOnScreen(location);
 
         //获取自身的长宽高
         layout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -453,6 +462,7 @@ public class BinDingActivity extends BaseActivity {
         bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] imageBytes = baos.toByteArray();
         String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        Log.d("Base64", encodedImage);
         return encodedImage;
     }
 

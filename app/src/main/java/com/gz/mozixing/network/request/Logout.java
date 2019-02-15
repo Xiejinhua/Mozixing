@@ -11,17 +11,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 退出登录接口
+ *
  * @author Alex
  * @since 19/1/30
  */
 
 public class Logout extends Response {
 
-    private static final String url = Constant.API_Target_url + "user/logout";
+    private static final String url = Constant.API_Target_url + "parentUser/outUser";
 
     //请求数据
-    public static void getResponse(NetWorkCallback netWorkCallback) {
-        Map<String, String> map = new HashMap<>();
+    public static void getResponse(Map<String, String> map, NetWorkCallback netWorkCallback) {
 
         APIManagerUtil.getInstance().startPostResponse(url, map, netWorkCallback, Logout.class);
 
@@ -32,4 +33,6 @@ public class Logout extends Response {
         RequestCall call = OkHttpUtils.get().url(url).build();
         call.cancel();
     }
+
+
 }
